@@ -7,7 +7,7 @@ pin = "35d8df0d031315219f94d1546ceb862b0e5b208f"
 
 [repos.spel]
 source = "https://github.com/logos-co/spel.git"
-pin = "ed3bbedb4b684645da05455d30a4a0be7cc4dfe0"
+pin = "3d639076ec0946a6a6db799dd5a4648007f362ee"
 
 [repos.basecamp]
 source = "https://github.com/logos-co/logos-basecamp.git"
