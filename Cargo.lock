@@ -2815,6 +2815,7 @@ dependencies = [
  "nssa",
  "nssa_core 0.1.0 (git+https://github.com/logos-blockchain/lssa.git?rev=767b5afd388c7981bcdf6f5b5c80159607e07e5b)",
  "serde",
+ "serde_json",
  "tokio",
  "wallet",
 ]

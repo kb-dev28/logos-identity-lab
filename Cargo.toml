@@ -52,5 +52,6 @@ lez-framework-core.workspace = true
 example_program_deployment_methods = { path = "methods" }
 
 serde.workspace = true
+serde_json.workspace = true
 clap.workspace = true
 tokio = { workspace = true, features = ["macros"] }

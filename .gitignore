@@ -4,3 +4,6 @@ Cargo.lock.bak
 .scaffold
 
 docs/internal/
+
+# Perfil local con datos reales (copiar desde docs/examples/profile.example.json)
+docs/examples/
