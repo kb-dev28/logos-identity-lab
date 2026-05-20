@@ -1,0 +1,32 @@
+{
+  "accounts": [],
+  "errors": [],
+  "instructions": [
+    {
+      "accounts": [
+        {
+          "init": false,
+          "name": "authority",
+          "signer": true,
+          "writable": false
+        }
+      ],
+      "args": [
+        {
+          "name": "proof",
+          "type": {
+            "vec": "u8"
+          }
+        },
+        {
+          "name": "min_age",
+          "type": "u8"
+        }
+      ],
+      "name": "verify_age_proof"
+    }
+  ],
+  "name": "identity_lab",
+  "types": [],
+  "version": "0.1.0"
+}

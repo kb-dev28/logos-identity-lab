@@ -2,7 +2,7 @@ pub mod profile;
 
 #[allow(dead_code)]
 pub mod runner_support {
-    use nssa::{AccountId, program::Program};
+    use nssa::{program::Program, AccountId};
 
     pub fn parse_account_id(raw: &str) -> AccountId {
         let normalized = raw
@@ -27,56 +27,6 @@ pub mod runner_support {
     }
 }
 
-// Host-side program definition for IDL extraction and testing.
-// The guest binary (methods/guest) handles zkvm execution.
-use lez_framework::prelude::*;
-use lez_framework::error::{LezError, LezResult};
-use lez_framework_core::types::LezOutput;
-use nssa_core::program::AccountPostState;
-use nssa_core::account::AccountWithMetadata;
-
-#[lez_program]
-mod lez_counter {
-    #[allow(unused_imports)]
-    use super::*;
-
-    #[instruction]
-    pub fn initialize(
-        #[account(init, pda = literal("counter"))]
-        counter: AccountWithMetadata,
-        #[account(signer)]
-        authority: AccountWithMetadata,
-    ) -> LezResult {
-        Ok(LezOutput::states_only(vec![
-            AccountPostState::new_claimed(counter.account.clone()),
-            AccountPostState::new(authority.account.clone()),
-        ]))
-    }
-
-    #[instruction]
-    pub fn increment(
-        #[account(mut, pda = literal("counter"))]
-        counter: AccountWithMetadata,
-        #[account(signer)]
-        authority: AccountWithMetadata,
-        amount: u64,
-    ) -> LezResult {
-        let mut counter_post = counter.account.clone();
-        counter_post.balance += amount as u128;
-
-        Ok(LezOutput::states_only(vec![
-            AccountPostState::new(counter_post),
-            AccountPostState::new(authority.account.clone()),
-        ]))
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn __lssa_idl_print() {
-        println!("--- LSSA IDL BEGIN lez_counter ---");
-        println!("{}", super::PROGRAM_IDL_JSON);
-        println!("--- LSSA IDL END lez_counter ---");
-    }
-}
+/// One `#[lez_program]` per module so each exports its own `PROGRAM_IDL_JSON`.
+pub mod lez_counter_program;
+pub mod identity_lab_program;

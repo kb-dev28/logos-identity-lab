@@ -24,3 +24,8 @@ test = false
 name = "age_gte_18"
 path = "src/bin/age_gte_18.rs"
 test = false
+
+[[bin]]
+name = "identity_lab"
+path = "src/bin/identity_lab.rs"
+test = false
