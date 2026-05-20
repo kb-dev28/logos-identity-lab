@@ -19,3 +19,8 @@ lez-framework-core.workspace = true
 name = "lez_counter"
 path = "src/bin/lez_counter.rs"
 test = false
+
+[[bin]]
+name = "age_gte_18"
+path = "src/bin/age_gte_18.rs"
+test = false

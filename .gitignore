@@ -6,4 +6,5 @@ Cargo.lock.bak
 docs/internal/
 
 # Perfil local con datos reales (copiar desde docs/examples/profile.example.json)
-docs/examples/
+profile.json
+proofs/
