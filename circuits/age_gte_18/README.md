@@ -15,7 +15,10 @@ cp docs/examples/profile.example.json profile.json
 # edita age
 
 cargo run --bin prove_age_gte_18 -- prove --profile profile.json
-cargo run --bin prove_age_gte_18 -- verify --proof proofs/age_gte_18
+cargo run --bin prove_age_gte_18 -- verify --proof-dir proofs/age_gte_18
+
+# Simular app "solo +18" (falla si meets_policy == 0)
+cargo run --bin prove_age_gte_18 -- verify --proof-dir proofs/age_gte_18 --require-pass
 ```
 
 Salidas en `proofs/age_gte_18/`:

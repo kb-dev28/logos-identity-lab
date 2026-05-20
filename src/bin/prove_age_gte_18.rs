@@ -38,6 +38,9 @@ enum Command {
     Verify {
         #[arg(long, default_value = "proofs/age_gte_18")]
         proof_dir: PathBuf,
+        /// Falla (exit 1) si la prueba es válida pero meets_policy != 1 (útil para "puerta +18")
+        #[arg(long)]
+        require_pass: bool,
     },
 }
 
@@ -66,7 +69,10 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
             proof_dir,
             require_pass,
         } => prove(&profile, min_age, &proof_dir, require_pass),
-        Command::Verify { proof_dir } => verify(&proof_dir),
+        Command::Verify {
+            proof_dir,
+            require_pass,
+        } => verify(&proof_dir, require_pass),
     }
 }
 
@@ -127,7 +133,7 @@ fn prove(
     Ok(())
 }
 
-fn verify(proof_dir: &PathBuf) -> Result<(), Box<dyn std::error::Error>> {
+fn verify(proof_dir: &PathBuf, require_pass: bool) -> Result<(), Box<dyn std::error::Error>> {
     let receipt_path = proof_dir.join("receipt.bin");
     let manifest_path = proof_dir.join("manifest.json");
 
@@ -138,14 +144,29 @@ fn verify(proof_dir: &PathBuf) -> Result<(), Box<dyn std::error::Error>> {
     let meets_policy: u8 = receipt.journal.decode()?;
     let manifest: ProofManifest = serde_json::from_slice(&std::fs::read(&manifest_path)?)?;
 
-    println!("verify OK");
-    println!("  meets_policy (from journal): {meets_policy}");
+    if meets_policy != manifest.meets_policy {
+        return Err("manifest meets_policy does not match receipt journal".into());
+    }
+
+    println!("verify OK (cryptographic)");
+    println!("  meets_policy (public journal): {meets_policy}");
     println!("  min_age (manifest): {}", manifest.min_age);
     println!("  policy: {}", manifest.policy);
     println!("  image_id: {}", manifest.image_id);
+    println!("  receipt:  {} ({} bytes)", receipt_path.display(), receipt_bytes.len());
 
-    if meets_policy != manifest.meets_policy {
-        return Err("manifest meets_policy does not match receipt journal".into());
+    if require_pass && meets_policy != 1 {
+        return Err(format!(
+            "proof is valid but policy not satisfied (meets_policy={meets_policy}, need 1 for age >= {})",
+            manifest.min_age
+        )
+        .into());
+    }
+
+    if meets_policy == 1 {
+        println!("  access: GRANTED (age policy satisfied)");
+    } else {
+        println!("  access: DENIED (proof valid, policy not satisfied)");
     }
 
     Ok(())

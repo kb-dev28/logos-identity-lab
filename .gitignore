@@ -8,3 +8,5 @@ docs/internal/
 # Perfil local con datos reales (copiar desde docs/examples/profile.example.json)
 profile.json
 proofs/
+
+circuits/age_gte_18/README.md
