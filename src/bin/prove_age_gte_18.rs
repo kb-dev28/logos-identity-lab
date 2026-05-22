@@ -2,8 +2,9 @@
 
 use clap::{Parser, Subcommand};
 use example_program_deployment_methods::{AGE_GTE_18_ELF, AGE_GTE_18_ID};
+use identity_lab::age_proof::verify_age_receipt_bytes;
 use identity_lab::profile::{Policy, Profile};
-use risc0_zkvm::{default_prover, ExecutorEnv, Receipt};
+use risc0_zkvm::{default_prover, ExecutorEnv};
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 
@@ -101,7 +102,13 @@ fn prove(
 
     let prove_info = default_prover().prove(env, AGE_GTE_18_ELF)?;
     let receipt = prove_info.receipt;
-    let meets_policy: u8 = receipt.journal.decode()?;
+    let (proved_min_age, meets_policy): (u8, u8) = receipt.journal.decode()?;
+    if proved_min_age != min_age {
+        return Err(format!(
+            "internal: journal min_age {proved_min_age} != requested {min_age}"
+        )
+        .into());
+    }
 
     std::fs::create_dir_all(proof_dir)?;
     let receipt_path = proof_dir.join("receipt.bin");
@@ -138,12 +145,8 @@ fn verify(proof_dir: &PathBuf, require_pass: bool) -> Result<(), Box<dyn std::er
     let manifest_path = proof_dir.join("manifest.json");
 
     let receipt_bytes = std::fs::read(&receipt_path)?;
-    let receipt: Receipt = bincode::deserialize(&receipt_bytes)?;
-    receipt.verify(AGE_GTE_18_ID)?;
-
-    let meets_policy: u8 = receipt.journal.decode()?;
     let manifest: ProofManifest = serde_json::from_slice(&std::fs::read(&manifest_path)?)?;
-
+    let meets_policy = verify_age_receipt_bytes(&receipt_bytes, manifest.min_age)?;
     if meets_policy != manifest.meets_policy {
         return Err("manifest meets_policy does not match receipt journal".into());
     }

@@ -9,5 +9,6 @@ fn main() {
     let age: u8 = env::read();
     let min_age: u8 = env::read();
     let meets: u8 = u8::from(age >= min_age);
-    env::commit(&meets);
+    // Público: umbral pedido + resultado (la edad sigue siendo privada).
+    env::commit(&(min_age, meets));
 }

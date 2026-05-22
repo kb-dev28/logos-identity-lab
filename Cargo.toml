@@ -62,3 +62,7 @@ tokio = { workspace = true, features = ["macros"] }
 [[bin]]
 name = "prove_age_gte_18"
 path = "src/bin/prove_age_gte_18.rs"
+
+[[bin]]
+name = "run_identity_lab"
+path = "src/bin/run_identity_lab.rs"

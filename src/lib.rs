@@ -1,3 +1,4 @@
+pub mod age_proof;
 pub mod profile;
 
 #[allow(dead_code)]
